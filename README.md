@@ -8,9 +8,11 @@ In this tutorial we're going to add a feature to it - we're going to make it pos
 
 Putting it all together
 
-* You can compile both of these with just the RabbitMQ java client and receiver on the classpath:
+* You can compile both of these with just the RabbitMQ java sender and receiver on the classpath
 
+Sender
  `$ javac -cp rabbitmq-client.jar EmitLogDirect.java `
+Receive
  `$ javac -cp rabbitmq-client.jar ReceiveLogsDirect.java`
 
 * To run them, you'll need rabbitmq-client.jar and its dependencies on the classpath. In a terminal, run the sender:
