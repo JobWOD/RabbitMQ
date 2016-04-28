@@ -8,6 +8,7 @@ public class EmitLogDirect2 extends Thread implements Runnable{
   private static Connection connection;
   private static Channel channel;
   private static String queueName;
+  private static EmitLogDirect2 INSTANCE = new EmitLogDirect2();
 
   @Override
   public void run(){
