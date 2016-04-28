@@ -92,7 +92,7 @@ public class EmitLogDirect2 extends Thread implements Runnable{
      * If blank, it is assumed that the event manager is on the local machine.
      */
     public static void main(String args[]) {
-        if(args[0] != null) Component.SERVER_IP = args[0];
+        if(args[0] != null)
         EmitLogDirect2 sensor = EmitLogDirect2.getInstance();
         sensor.run();
     }
