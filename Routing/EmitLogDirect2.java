@@ -61,4 +61,39 @@ public class EmitLogDirect2 extends Thread implements Runnable{
     connection.close();
   }
 
+    private static void createInstance() {
+        if (INSTANCE == null) {
+            synchronized (EmitLogDirect2.class) {
+                if (INSTANCE == null) {
+                    INSTANCE = new EmitLogDirect2();
+                }
+            }
+        }
+    }
+
+    /**
+     * This method calls createInstance method to creates and ensure that 
+     * only one instance of this class is created. Singleton design pattern.
+     * 
+     * @return The instance of this class.
+     */
+    public static EmitLogDirect2 getInstance() {
+        if (INSTANCE == null) {
+            createInstance();
+        }
+        return INSTANCE;
+    }
+
+    /**
+     * Start this controller
+     * 
+     * @param args IP address of the event manager (on command line). 
+     * If blank, it is assumed that the event manager is on the local machine.
+     */
+    public static void main(String args[]) {
+        if(args[0] != null) Component.SERVER_IP = args[0];
+        EmitLogDirect2 sensor = EmitLogDirect2.getInstance();
+        sensor.run();
+    }
+
 }
