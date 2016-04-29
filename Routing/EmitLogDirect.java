@@ -11,12 +11,10 @@ public class EmitLogDirect extends Thread implements Runnable{
 
   @Override
   public void run(){
-
     while (true){
       try{
         Thread.sleep(2000);
         enviaM("A","HolaD");
-        recibirM();
       }
       catch(Exception e){}
     }
@@ -30,7 +28,6 @@ public class EmitLogDirect extends Thread implements Runnable{
     channel.close();
     connection.close();
   }
-
 
   public static void conexionM()throws Exception{
       factory = new ConnectionFactory();
@@ -53,10 +50,9 @@ public class EmitLogDirect extends Thread implements Runnable{
     };
     channel.basicConsume(queueName, true, consumer);
   }
-  
 
   public static void main(String args[]) throws Exception{
-      conexionM();
+      recibirM();
       (new Thread(new EmitLogDirect())).start();
   }
       

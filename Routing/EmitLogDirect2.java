@@ -19,6 +19,16 @@ public class EmitLogDirect2 extends Thread implements Runnable{
       catch(Exception e){}
     }
   }
+
+  public static void enviaM (String id, String message) throws Exception {
+    conexionM();
+    channel.basicPublish(EXCHANGE_NAME, id, null, message.getBytes("UTF-8"));
+    System.out.println(" [x] Sent '" + id + "':'" + message + "'");
+
+    channel.close();
+    connection.close();
+  }
+
   public static void conexionM()throws Exception{
     factory = new ConnectionFactory();
     factory.setHost("localhost");
@@ -29,27 +39,20 @@ public class EmitLogDirect2 extends Thread implements Runnable{
     channel.queueBind(queueName, EXCHANGE_NAME, "BB");
   }
 
-  public static void enviaM (String id, String message) throws Exception {
+  public static void recibirM() throws Exception{
     conexionM();
-    channel.basicPublish(EXCHANGE_NAME, id, null, message.getBytes("UTF-8"));
-    System.out.println(" [x] Sent '" + id + "':'" + message + "'");
-
-    channel.close();
-    connection.close();
-  }
-    
-  public static void main(String args[]) throws Exception{
-    conexionM();
-    (new Thread(new EmitLogDirect2())).start();
-
     Consumer consumer = new DefaultConsumer(channel) {
-      @Override
-      public void handleDelivery(String consumerTag, Envelope envelope,
-                                 AMQP.BasicProperties properties, byte[] body) throws IOException {
+        @Override
+        public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
         String message = new String(body, "UTF-8");
         System.out.println(" [x] Received '" + envelope.getRoutingKey() + "':'" + message + "'");
       }
     };
     channel.basicConsume(queueName, true, consumer);
+  }
+    
+  public static void main(String args[]) throws Exception{
+    recibirM();
+    (new Thread(new EmitLogDirect2())).start();
   }
 }

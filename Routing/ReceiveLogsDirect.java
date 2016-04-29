@@ -1,7 +1,7 @@
 import com.rabbitmq.client.*;
 import java.io.IOException;
 
-public class ReceiveLogsDirect{
+public class ReceiveLogsDirect extends Thread implements Runnable{
 
   private static final String EXCHANGE_NAME = "direct_logs";
   private static ConnectionFactory factory;
@@ -9,7 +9,21 @@ public class ReceiveLogsDirect{
   private static Channel channel;
   private static String queueName,queue2;
 
-  public static void main(String[] argv) throws Exception {
+  @Override
+  public void run(){
+    while (true){}
+  }
+
+  public static void enviaM (String id, String message) throws Exception {
+    conexionM();
+    channel.basicPublish(EXCHANGE_NAME, id, null, message.getBytes("UTF-8"));
+    System.out.println(" [x] Sent '" + id + "':'" + message + "'");
+
+    channel.close();
+    connection.close();
+  }
+    
+  public static void conexionM()throws Exception{
     factory = new ConnectionFactory();
     factory.setHost("localhost");
     connection = factory.newConnection();
@@ -17,12 +31,13 @@ public class ReceiveLogsDirect{
     channel.exchangeDeclare(EXCHANGE_NAME, "direct");
     queueName = channel.queueDeclare().getQueue();
     channel.queueBind(queueName, EXCHANGE_NAME, "A");
-
     queue2 = channel.queueDeclare().getQueue();
     channel.queueBind(queue2, EXCHANGE_NAME, "B");
-    
-    System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
+  }
 
+
+  public static void recibirM() throws Exception{
+    conexionM();
     Consumer consumer = new DefaultConsumer(channel) {
       @Override
       public void handleDelivery(String consumerTag, Envelope envelope,
@@ -42,9 +57,8 @@ public class ReceiveLogsDirect{
     channel.basicConsume(queue2, true, consumer); 
   }
 
-  public static void enviaM (String id, String message) throws Exception {
-    
-    channel.basicPublish(EXCHANGE_NAME, id, null, message.getBytes("UTF-8"));
-    System.out.println(" [x] Sent '" + id + "':'" + message + "'");
+  public static void main(String args[]) throws Exception{
+      recibirM();
+      (new Thread(new ReceiveLogsDirect())).start();
   }
 }
