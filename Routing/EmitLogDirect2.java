@@ -19,8 +19,7 @@ public class EmitLogDirect2 extends Thread implements Runnable{
       catch(Exception e){}
     }
   }
-
-  public static void enviaM (String id, String message) throws Exception {
+  public static void conexionM()throws Exception{
     factory = new ConnectionFactory();
     factory.setHost("localhost");
     connection = factory.newConnection();
@@ -28,7 +27,10 @@ public class EmitLogDirect2 extends Thread implements Runnable{
     channel.exchangeDeclare(EXCHANGE_NAME, "direct");
     queueName = channel.queueDeclare().getQueue();
     channel.queueBind(queueName, EXCHANGE_NAME, "BB");
+  }
 
+  public static void enviaM (String id, String message) throws Exception {
+    conexionM();
     channel.basicPublish(EXCHANGE_NAME, id, null, message.getBytes("UTF-8"));
     System.out.println(" [x] Sent '" + id + "':'" + message + "'");
 
@@ -37,14 +39,7 @@ public class EmitLogDirect2 extends Thread implements Runnable{
   }
     
   public static void main(String args[]) throws Exception{
-    factory = new ConnectionFactory();
-    factory.setHost("localhost");
-    connection = factory.newConnection();
-    channel = connection.createChannel();
-    channel.exchangeDeclare(EXCHANGE_NAME, "direct");
-    queueName = channel.queueDeclare().getQueue();
-    channel.queueBind(queueName, EXCHANGE_NAME, "BB");
-
+    conexionM();
     (new Thread(new EmitLogDirect2())).start();
 
     Consumer consumer = new DefaultConsumer(channel) {
