@@ -11,18 +11,24 @@ public class EmitLogDirect extends Thread implements Runnable{
 
   @Override
   public void run(){
+    while (true){
       try{
-        Thread.sleep(1000);
+        Thread.sleep(2000);
         enviaM("A","HolaD");
       }
       catch(Exception e){}
+    }
   }
 
   public static void enviaM (String id, String message) throws Exception {
     conexionM();
     channel.basicPublish(EXCHANGE_NAME, id, null, message.getBytes("UTF-8"));
     System.out.println(" [x] Sent '" + id + "':'" + message + "'");
+
+    channel.close();
+    connection.close();
   }
+
 
   public static void conexionM()throws Exception{
       factory = new ConnectionFactory();
@@ -40,13 +46,11 @@ public class EmitLogDirect extends Thread implements Runnable{
 
       Consumer consumer = new DefaultConsumer(channel) {
         @Override
-        public void handleDelivery(String consumerTag, Envelope envelope,
-                                 AMQP.BasicProperties properties, byte[] body) throws IOException {
-          String message = new String(body, "UTF-8");
-          System.out.println(" [x] Received '" + envelope.getRoutingKey() + "':'" + message + "'");
-        }
-      };
-      channel.basicConsume(queueName, true, consumer);
+        public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
+        String message = new String(body, "UTF-8");
+        System.out.println(" [x] Received '" + envelope.getRoutingKey() + "':'" + message + "'");
+      }
+    };
+    channel.basicConsume(queueName, true, consumer);
   }
-
 }
