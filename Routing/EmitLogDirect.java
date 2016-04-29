@@ -12,7 +12,7 @@ public class EmitLogDirect extends Thread implements Runnable{
   @Override
   public void run(){
       try{
-        Thread.sleep(2000);
+        Thread.sleep(1000);
         enviaM("A","HolaD");
       }
       catch(Exception e){}
